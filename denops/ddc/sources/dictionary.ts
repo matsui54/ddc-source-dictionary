@@ -61,10 +61,9 @@ export class Source extends BaseSource {
     _options: SourceOptions,
     _params: Record<string, unknown>,
   ): Promise<Candidate[]> {
-    // if (!Object.keys(this.cache).length) {
-    // }
-    // const dictOpt = (await fn.getbufvar(denops, 1, "&dictionary")) as string;
-    // const dicts = this.getDictionaries(dictOpt);
+    if (!this.dicts) {
+      return [];
+    }
 
     let candidates: Candidate[] = [];
     for (const file of this.dicts) {
