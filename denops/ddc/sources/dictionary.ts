@@ -2,9 +2,10 @@ import {
   BaseSource,
   Candidate,
   Context,
-  Denops,
+  DdcOptions,
   SourceOptions,
-} from "https://deno.land/x/ddc_vim@v0.0.4/types.ts";
+} from "https://deno.land/x/ddc_vim@v0.0.5/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.0.5/deps.ts";
 
 type DictCache = {
   mtime: Date | null;
@@ -18,20 +19,23 @@ export class Source extends BaseSource {
     return dictOpt.split(",");
   }
 
-  private makeCache(dictOpt: string): void {
-    if (!dictOpt) {
+  private makeCache(dicts: string[]): void {
+    if (!dicts) {
       return;
     }
 
-    for (const dictFile of (this.getDictionaries(dictOpt))) {
+    for (const dictFile of dicts) {
       const mtime = Deno.statSync(dictFile).mtime;
-      if (dictFile in this.cache && this.cache[dictFile].mtime == mtime) {
+      if (
+        dictFile in this.cache &&
+        this.cache[dictFile].mtime?.getTime() == mtime?.getTime()
+      ) {
         return;
       }
       const texts = Deno.readTextFileSync(dictFile).split("\n");
       this.cache[dictFile] = {
         "mtime": mtime,
-        "candidates": texts.map((word) => ({ word })).sort(),
+        "candidates": texts.map((word) => ({ word })),
       };
     }
   }
@@ -39,23 +43,21 @@ export class Source extends BaseSource {
   async gatherCandidates(
     denops: Denops,
     _context: Context,
+    _ddcOptions: DdcOptions,
     _options: SourceOptions,
     _params: Record<string, unknown>,
   ): Promise<Candidate[]> {
-    // Note: denops.vim does not have options support...
-    if (!Object.keys(this.cache).length) {
-      const dictOpt =
-        (await denops.call("getbufvar", 1, "&dictionary")) as string;
-      this.makeCache(dictOpt);
-    }
-    const candidates: Candidate[] = [];
-    Object.keys(this.cache)
-      .map((file) => {
-        this.cache[file].candidates.map((candidate) => {
-          candidates.push(candidate);
-        });
-      });
+    // if (!Object.keys(this.cache).length) {
+    // }
+    const dictOpt = (await fn.getbufvar(denops, 1, "&dictionary")) as string;
+    const dicts = this.getDictionaries(dictOpt);
+    this.makeCache(dicts);
 
+    let candidates: Candidate[] = [];
+    for (const file of dicts) {
+      candidates.concat(this.cache[file].candidates);
+      candidates = candidates.concat(this.cache[file].candidates);
+    }
     return candidates;
   }
 }
