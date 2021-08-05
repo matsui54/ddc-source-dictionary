@@ -4,7 +4,7 @@ import {
   Context,
   DdcOptions,
   SourceOptions,
-} from "https://deno.land/x/ddc_vim@v0.0.5/types.ts";
+} from "../../../../../Shougo/ddc.vim/denops/ddc/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.0.5/deps.ts";
 
 type DictCache = {
@@ -14,17 +14,18 @@ type DictCache = {
 
 export class Source extends BaseSource {
   private cache: { [filename: string]: DictCache } = {};
+  private dicts: string[] = [];
 
   private getDictionaries(dictOpt: string): string[] {
     return dictOpt.split(",");
   }
 
-  private makeCache(dicts: string[]): void {
-    if (!dicts) {
+  private makeCache(): void {
+    if (!this.dicts) {
       return;
     }
 
-    for (const dictFile of dicts) {
+    for (const dictFile of this.dicts) {
       const mtime = Deno.statSync(dictFile).mtime;
       if (
         dictFile in this.cache &&
@@ -40,8 +41,21 @@ export class Source extends BaseSource {
     }
   }
 
-  async gatherCandidates(
+  async onEvent(
     denops: Denops,
+    _context: Context,
+    _ddcOptions: DdcOptions,
+    _options: SourceOptions,
+    _params: Record<string, unknown>,
+  ): Promise<void> {
+    this.dicts = this.getDictionaries(
+      (await fn.getbufvar(denops, 1, "&dictionary") as string),
+    );
+    this.makeCache();
+  }
+
+  async gatherCandidates(
+    _denops: Denops,
     _context: Context,
     _ddcOptions: DdcOptions,
     _options: SourceOptions,
@@ -49,12 +63,11 @@ export class Source extends BaseSource {
   ): Promise<Candidate[]> {
     // if (!Object.keys(this.cache).length) {
     // }
-    const dictOpt = (await fn.getbufvar(denops, 1, "&dictionary")) as string;
-    const dicts = this.getDictionaries(dictOpt);
-    this.makeCache(dicts);
+    // const dictOpt = (await fn.getbufvar(denops, 1, "&dictionary")) as string;
+    // const dicts = this.getDictionaries(dictOpt);
 
     let candidates: Candidate[] = [];
-    for (const file of dicts) {
+    for (const file of this.dicts) {
       candidates.concat(this.cache[file].candidates);
       candidates = candidates.concat(this.cache[file].candidates);
     }
