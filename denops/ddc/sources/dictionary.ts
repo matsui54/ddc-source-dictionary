@@ -17,7 +17,11 @@ export class Source extends BaseSource {
   private dicts: string[] = [];
 
   private getDictionaries(dictOpt: string): string[] {
-    return dictOpt.split(",");
+    if (dictOpt) {
+      return dictOpt.split(",");
+    } else {
+      return [];
+    }
   }
 
   private makeCache(): void {
@@ -46,11 +50,15 @@ export class Source extends BaseSource {
     _context: Context,
     _ddcOptions: DdcOptions,
     _options: SourceOptions,
-    _params: Record<string, unknown>,
+    params: Record<string, unknown>,
   ): Promise<void> {
     this.dicts = this.getDictionaries(
       (await fn.getbufvar(denops, 1, "&dictionary") as string),
     );
+    const paths = params.dictPaths;
+    if (paths && Array.isArray(paths)) {
+      this.dicts = this.dicts.concat(paths as string[]);
+    }
     this.makeCache();
   }
 
