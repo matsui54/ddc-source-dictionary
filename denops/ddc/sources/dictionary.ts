@@ -4,8 +4,8 @@ import {
   Context,
   DdcOptions,
   SourceOptions,
-} from "https://deno.land/x/ddc_vim@v0.0.11/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.0.11/deps.ts";
+} from "https://deno.land/x/ddc_vim@v0.0.12/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.0.12/deps.ts";
 
 type DictCache = {
   mtime: Date | null;
