@@ -4,8 +4,8 @@ import {
   Context,
   DdcOptions,
   SourceOptions,
-} from "https://deno.land/x/ddc_vim@v0.0.12/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.0.12/deps.ts";
+} from "https://deno.land/x/ddc_vim@v0.0.13/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.0.13/deps.ts";
 
 type DictCache = {
   mtime: Date | null;
@@ -15,6 +15,7 @@ type DictCache = {
 export class Source extends BaseSource {
   private cache: { [filename: string]: DictCache } = {};
   private dicts: string[] = [];
+  events = ["InsertEnter"]
 
   private getDictionaries(dictOpt: string): string[] {
     if (dictOpt) {
