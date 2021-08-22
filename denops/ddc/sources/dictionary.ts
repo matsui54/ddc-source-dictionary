@@ -1,11 +1,9 @@
 import {
   BaseSource,
   Candidate,
-  Context,
-  DdcOptions,
-  SourceOptions,
-} from "https://deno.land/x/ddc_vim@v0.1.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.1.0/deps.ts";
+  DdcEvent
+} from "https://deno.land/x/ddc_vim@v0.2.2/types.ts#^";
+import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.2.2/deps.ts#^";
 
 type DictCache = {
   mtime: Date | null;
@@ -15,7 +13,7 @@ type DictCache = {
 export class Source extends BaseSource {
   private cache: { [filename: string]: DictCache } = {};
   private dicts: string[] = [];
-  events = ["InsertEnter"];
+  events = ["InsertEnter"] as DdcEvent[];
 
   private getDictionaries(dictOpt: string): string[] {
     if (dictOpt) {
@@ -46,17 +44,14 @@ export class Source extends BaseSource {
     }
   }
 
-  async onEvent(
+  async onEvent(args:{
     denops: Denops,
-    _context: Context,
-    _ddcOptions: DdcOptions,
-    _options: SourceOptions,
-    params: Record<string, unknown>,
-  ): Promise<void> {
+    sourceParams: Record<string, unknown>,
+  }): Promise<void> {
     this.dicts = this.getDictionaries(
-      (await fn.getbufvar(denops, 1, "&dictionary") as string),
+      (await fn.getbufvar(args.denops, 1, "&dictionary") as string),
     );
-    const paths = params.dictPaths;
+    const paths = args.sourceParams.dictPaths;
     if (paths && Array.isArray(paths)) {
       this.dicts = this.dicts.concat(paths as string[]);
     }
@@ -64,11 +59,6 @@ export class Source extends BaseSource {
   }
 
   async gatherCandidates(
-    _denops: Denops,
-    _context: Context,
-    _ddcOptions: DdcOptions,
-    _options: SourceOptions,
-    _params: Record<string, unknown>,
   ): Promise<Candidate[]> {
     if (!this.dicts) {
       return [];
