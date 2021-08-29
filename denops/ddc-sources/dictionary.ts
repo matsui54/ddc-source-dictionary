@@ -1,9 +1,9 @@
 import {
   BaseSource,
   Candidate,
-  DdcEvent
-} from "https://deno.land/x/ddc_vim@v0.3.0/types.ts#^";
-import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.3.0/deps.ts#^";
+  DdcEvent,
+} from "https://deno.land/x/ddc_vim@v0.4.1/types.ts#^";
+import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.4.1/deps.ts#^";
 
 type DictCache = {
   mtime: Date | null;
@@ -44,9 +44,9 @@ export class Source extends BaseSource {
     }
   }
 
-  async onEvent(args:{
-    denops: Denops,
-    sourceParams: Record<string, unknown>,
+  async onEvent(args: {
+    denops: Denops;
+    sourceParams: Record<string, unknown>;
   }): Promise<void> {
     this.dicts = this.getDictionaries(
       (await fn.getbufvar(args.denops, 1, "&dictionary") as string),
@@ -58,8 +58,7 @@ export class Source extends BaseSource {
     this.makeCache();
   }
 
-  async gatherCandidates(
-  ): Promise<Candidate[]> {
+  async gatherCandidates(): Promise<Candidate[]> {
     if (!this.dicts) {
       return [];
     }
