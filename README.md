@@ -10,6 +10,7 @@ https://github.com/vim-denops/denops.vim
 https://github.com/Shougo/ddc.vim
 
 ## Configuration examples
+For detail, please see help file.
 
 ```vim
 " you neeed to set 'dictionary' option
@@ -19,7 +20,9 @@ call ddc#custom#patch_global('sourceParams', {
       \ 'dictionary': {'dictPaths': 
       \ ['/usr/share/dict/german',
       \ '/usr/share/dict/words',
-      \ '/usr/share/dict/spanish']}
+      \ '/usr/share/dict/spanish'],
+      \ 'smartCase': v:true,
+      \ }
       \ })
 
 call ddc#custom#patch_global('sources', ['dictionary'])
