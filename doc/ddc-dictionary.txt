@@ -27,12 +27,12 @@ https://github.com/Shougo/ddc.vim
 https://github.com/vim-denops/denops.vim
 
 ==============================================================================
-INSTALL							*ddc-dictionary-install*
+USAGE							*ddc-dictionary-usage*
 
 Set 'dictionary' option or set "dicitonary" sourceParams like example below.
 
 ==============================================================================
-EXAMPLES						*ddc-dictionary-examples*
+EXAMPLES					*ddc-dictionary-examples*
 
 >
 	" you neeed to set 'dictionary' option
