@@ -1,6 +1,7 @@
 import {
   BaseSource,
   Candidate,
+  Context,
   DdcEvent,
 } from "https://deno.land/x/ddc_vim@v0.4.1/types.ts#^";
 import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.4.1/deps.ts#^";
@@ -9,6 +10,10 @@ type DictCache = {
   mtime: Date | null;
   candidates: Candidate[];
 };
+
+export function isUpper(char: string) {
+  return /[A-Z]/.test(char[0]);
+}
 
 export class Source extends BaseSource {
   private cache: { [filename: string]: DictCache } = {};
@@ -58,12 +63,22 @@ export class Source extends BaseSource {
     this.makeCache();
   }
 
-  async gatherCandidates(): Promise<Candidate[]> {
+  async gatherCandidates(args: { context: Context }): Promise<Candidate[]> {
     if (!this.dicts) {
       return [];
     }
 
+    const input = args.context.input;
+    const isFirstUpper = isUpper(input[0]);
+    const isSecondUpper = input.length > 1 ? isUpper(input[1]) : false;
     return this.dicts.map((dict) => this.cache[dict].candidates)
-      .flatMap((candidate) => candidate);
+      .flatMap((candidates) => candidates)
+      .map((candidate) => {
+        if (isSecondUpper) return { word: candidate.word.toUpperCase() };
+        if (isFirstUpper) {
+          return { word: candidate.word.replace(/^./, (m) => m.toUpperCase()) };
+        }
+        return candidate;
+      });
   }
 }
