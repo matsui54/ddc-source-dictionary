@@ -1,0 +1,62 @@
+*ddc-dictionary.txt*	dictionary source for ddc.vim
+
+Author: matsui54 <haru.matu9168 at gmail.com>
+License: MIT license
+
+CONTENTS						*ddc-dictionary-contents*
+
+Introduction		|ddc-dictionary-introduction|
+Install			|ddc-dictionary-install|
+Examples		|ddc-dictionary-examples|
+Params			|ddc-dictionary-params|
+
+
+==============================================================================
+INTRODUCTION					*ddc-dictionary-introduction*
+
+This source collects words from dictionary files specified by 'dictionary' or
+params.
+
+==============================================================================
+INSTALL							*ddc-dictionary-install*
+
+Please install both "ddc.vim" and "denops.vim".
+
+https://github.com/Shougo/ddc.vim
+https://github.com/vim-denops/denops.vim
+
+
+==============================================================================
+EXAMPLES						*ddc-dictionary-examples*
+
+>
+	" you neeed to set 'dictionary' option
+	setlocal dictionary+=/usr/share/dict/words
+	" or you can specify dictionary path using sourceParams ('dictPaths' must be list of files)
+	call ddc#custom#patch_global('sourceParams', {
+	      \ 'dictionary': {'dictPaths': 
+	      \ ['/usr/share/dict/german',
+	      \ '/usr/share/dict/words',
+	      \ '/usr/share/dict/spanish']}
+	      \ })
+
+	call ddc#custom#patch_global('sources', ['dictionary'])
+	call ddc#custom#patch_global('sourceOptions', {
+	      \ '_': {'matchers': ['matcher_head']},
+	      \ 'dictionary': {'mark': 'D'},
+	      \ })
+<
+
+==============================================================================
+PARAMS							*ddc-dictionary-params*
+
+					        *ddc-dictionary-param-dictPaths*
+dictPaths	(string[])
+		List of dictionary paths. Dictionary file must have the same
+		format as the one specified by 'dictionary'.
+
+		Default: []
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:
+
