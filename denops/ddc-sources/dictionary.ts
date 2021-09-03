@@ -2,8 +2,8 @@ import {
   BaseSource,
   Candidate,
   DdcEvent,
-} from "https://deno.land/x/ddc_vim@v0.4.1/types.ts#^";
-import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.4.1/deps.ts#^";
+} from "https://deno.land/x/ddc_vim@v0.5.0/types.ts#^";
+import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.5.0/deps.ts#^";
 
 type DictCache = {
   mtime: Date | null;
