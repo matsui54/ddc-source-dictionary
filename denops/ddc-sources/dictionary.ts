@@ -64,7 +64,11 @@ export class Source extends BaseSource {
   }
 
   async gatherCandidates(
-    args: { context: Context; completeStr: string },
+    args: {
+      context: Context;
+      completeStr: string;
+      sourceParams: Record<string, unknown>;
+    },
   ): Promise<Candidate[]> {
     if (!this.dicts) {
       return [];
@@ -76,11 +80,22 @@ export class Source extends BaseSource {
     return this.dicts.map((dict) => this.cache[dict].candidates)
       .flatMap((candidates) => candidates)
       .map((candidate) => {
-        if (isSecondUpper) return { word: candidate.word.toUpperCase() };
-        if (isFirstUpper) {
-          return { word: candidate.word.replace(/^./, (m) => m.toUpperCase()) };
+        if (args.sourceParams.smartcase) {
+          if (isSecondUpper) return { word: candidate.word.toUpperCase() };
+          if (isFirstUpper) {
+            return {
+              word: candidate.word.replace(/^./, (m) => m.toUpperCase()),
+            };
+          }
         }
         return candidate;
       });
+  }
+
+  params(): Record<string, unknown> {
+    return {
+      dictPaths: [],
+      smartcase: true,
+    };
   }
 }
