@@ -63,14 +63,16 @@ export class Source extends BaseSource {
     this.makeCache();
   }
 
-  async gatherCandidates(args: { context: Context }): Promise<Candidate[]> {
+  async gatherCandidates(
+    args: { context: Context; completeStr: string },
+  ): Promise<Candidate[]> {
     if (!this.dicts) {
       return [];
     }
 
-    const input = args.context.input;
-    const isFirstUpper = isUpper(input[0]);
-    const isSecondUpper = input.length > 1 ? isUpper(input[1]) : false;
+    const str = args.completeStr;
+    const isFirstUpper = isUpper(str[0]);
+    const isSecondUpper = str.length > 1 ? isUpper(str[1]) : false;
     return this.dicts.map((dict) => this.cache[dict].candidates)
       .flatMap((candidates) => candidates)
       .map((candidate) => {
