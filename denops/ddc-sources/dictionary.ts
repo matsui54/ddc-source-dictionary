@@ -49,6 +49,13 @@ export class Source extends BaseSource {
     }
   }
 
+  async onInit(args: {
+    denops: Denops;
+    sourceParams: Record<string, unknown>;
+  }): Promise<void> {
+    this.onEvent(args);
+  }
+
   async onEvent(args: {
     denops: Denops;
     sourceParams: Record<string, unknown>;
