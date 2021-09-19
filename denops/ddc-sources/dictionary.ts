@@ -1,10 +1,13 @@
 import {
   BaseSource,
   Candidate,
-  Context,
   DdcEvent,
-} from "https://deno.land/x/ddc_vim@v0.5.2/types.ts#^";
-import { Denops, fn } from "https://deno.land/x/ddc_vim@v0.5.2/deps.ts#^";
+} from "https://deno.land/x/ddc_vim@v0.11.0/types.ts#^";
+import {
+  GatherCandidatesArguments,
+  OnEventArguments,
+} from "https://deno.land/x/ddc_vim@v0.11.0/base/source.ts#^";
+import { fn } from "https://deno.land/x/ddc_vim@v0.11.0/deps.ts#^";
 
 type DictCache = {
   mtime: Date | null;
@@ -15,7 +18,12 @@ export function isUpper(char: string) {
   return /[A-Z]/.test(char[0]);
 }
 
-export class Source extends BaseSource {
+type Params = {
+  dictPaths: string[];
+  smartcase: boolean;
+};
+
+export class Source extends BaseSource<Params> {
   private cache: { [filename: string]: DictCache } = {};
   private dicts: string[] = [];
   events = ["InsertEnter"] as DdcEvent[];
@@ -49,45 +57,41 @@ export class Source extends BaseSource {
     }
   }
 
-  async onInit(args: {
-    denops: Denops;
-    sourceParams: Record<string, unknown>;
-  }): Promise<void> {
-    this.onEvent(args);
+  async onInit(
+    args: GatherCandidatesArguments<Params>,
+  ): Promise<void> {
+    await this.onEvent(args);
   }
 
-  async onEvent(args: {
-    denops: Denops;
-    sourceParams: Record<string, unknown>;
-  }): Promise<void> {
+  async onEvent({
+    denops,
+    sourceParams,
+  }: OnEventArguments<Params>): Promise<void> {
     this.dicts = this.getDictionaries(
-      (await fn.getbufvar(args.denops, 1, "&dictionary") as string),
+      (await fn.getbufvar(denops, 1, "&dictionary") as string),
     );
-    const paths = args.sourceParams.dictPaths;
+    const paths = sourceParams.dictPaths;
     if (paths && Array.isArray(paths)) {
       this.dicts = this.dicts.concat(paths as string[]);
     }
     this.makeCache();
   }
 
-  async gatherCandidates(
-    args: {
-      context: Context;
-      completeStr: string;
-      sourceParams: Record<string, unknown>;
-    },
-  ): Promise<Candidate[]> {
+  async gatherCandidates({
+    completeStr,
+    sourceParams,
+  }: GatherCandidatesArguments<Params>): Promise<Candidate[]> {
     if (!this.dicts) {
       return [];
     }
 
-    const str = args.completeStr;
+    const str = completeStr;
     const isFirstUpper = isUpper(str[0]);
     const isSecondUpper = str.length > 1 ? isUpper(str[1]) : false;
     return this.dicts.map((dict) => this.cache[dict].candidates)
       .flatMap((candidates) => candidates)
       .map((candidate) => {
-        if (args.sourceParams.smartcase) {
+        if (sourceParams.smartcase) {
           if (isSecondUpper) return { word: candidate.word.toUpperCase() };
           if (isFirstUpper) {
             return {
@@ -99,7 +103,7 @@ export class Source extends BaseSource {
       });
   }
 
-  params(): Record<string, unknown> {
+  params(): Params {
     return {
       dictPaths: [],
       smartcase: true,
