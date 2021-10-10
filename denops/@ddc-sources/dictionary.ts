@@ -56,7 +56,7 @@ export class Source extends BaseSource<Params> {
       const texts = content.split(delimiter);
       this.cache[dictFile] = {
         "mtime": mtime,
-        "candidates": texts.map((word) => ({ word })),
+        "candidates": texts.map((word) => ({ word, menu: dictFile })),
       };
     }
   }
