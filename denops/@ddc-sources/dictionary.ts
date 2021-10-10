@@ -52,7 +52,7 @@ export class Source extends BaseSource<Params> {
       const texts = Deno.readTextFileSync(dictFile).split("\n");
       this.cache[dictFile] = {
         "mtime": mtime,
-        "candidates": texts.map((word) => ({ word })),
+        "candidates": texts.map((word) => ({ word, menu: dictFile })),
       };
     }
   }
