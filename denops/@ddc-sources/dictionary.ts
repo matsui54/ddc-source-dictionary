@@ -21,6 +21,7 @@ export function isUpper(char: string) {
 type Params = {
   dictPaths: string[];
   smartcase: boolean;
+  showMenu: boolean;
 };
 
 export class Source extends BaseSource<Params> {
@@ -95,15 +96,17 @@ export class Source extends BaseSource<Params> {
     return this.dicts.map((dict) => this.cache[dict].candidates)
       .flatMap((candidates) => candidates)
       .map((candidate) => {
+        let word = candidate.word;
         if (sourceParams.smartcase) {
           if (isSecondUpper) return { word: candidate.word.toUpperCase() };
           if (isFirstUpper) {
-            return {
-              word: candidate.word.replace(/^./, (m) => m.toUpperCase()),
-            };
+            word = candidate.word.replace(/^./, (m) => m.toUpperCase());
           }
         }
-        return candidate;
+        return {
+          word: word,
+          menu: sourceParams.showMenu ? candidate.menu : "",
+        };
       });
   }
 
@@ -111,6 +114,7 @@ export class Source extends BaseSource<Params> {
     return {
       dictPaths: [],
       smartcase: true,
+      showMenu: true,
     };
   }
 }
