@@ -49,7 +49,11 @@ export class Source extends BaseSource<Params> {
       ) {
         return;
       }
-      const texts = Deno.readTextFileSync(dictFile).split("\n");
+      const content = Deno.readTextFileSync(dictFile) 
+      const delimiter = content.includes("\r\n") ? "\r\n"
+                      : content.includes("\r") ? "\r"
+                      : "\n"
+      const texts = Deno.readTextFileSync(dictFile).split(delimiter);
       this.cache[dictFile] = {
         "mtime": mtime,
         "candidates": texts.map((word) => ({ word })),
