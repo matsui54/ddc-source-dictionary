@@ -2,12 +2,12 @@ import {
   BaseSource,
   Candidate,
   DdcEvent,
-} from "https://deno.land/x/ddc_vim@v0.17.0/types.ts#^";
+} from "https://deno.land/x/ddc_vim@v0.18.0/types.ts#^";
 import {
   GatherCandidatesArguments,
   OnEventArguments,
-} from "https://deno.land/x/ddc_vim@v0.17.0/base/source.ts#^";
-import { fn } from "https://deno.land/x/ddc_vim@v0.17.0/deps.ts#^";
+} from "https://deno.land/x/ddc_vim@v0.18.0/base/source.ts#^";
+import { fn } from "https://deno.land/x/ddc_vim@v0.18.0/deps.ts#^";
 
 type DictCache = {
   mtime: Date | null;
