@@ -69,7 +69,7 @@ export class Source extends BaseSource<Params> {
     sourceParams,
   }: OnEventArguments<Params>): Promise<void> {
     this.dicts = this.getDictionaries(
-      (await fn.getbufvar(denops, 1, "&dictionary") as string),
+      await fn.getbufvar(denops, 1, "&dictionary") as string,
     );
     const paths = sourceParams.dictPaths;
     if (paths && Array.isArray(paths)) {
@@ -87,7 +87,7 @@ export class Source extends BaseSource<Params> {
     }
 
     const str = completeStr;
-    const isFirstUpper = isUpper(str[0]);
+    const isFirstUpper = str.length ? isUpper(str[0]) : false;
     const isSecondUpper = str.length > 1 ? isUpper(str[1]) : false;
     return this.dicts.map((dict) => this.cache[dict].candidates)
       .flatMap((candidates) => candidates)
