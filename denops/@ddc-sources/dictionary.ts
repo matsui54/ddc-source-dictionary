@@ -1,17 +1,17 @@
 import {
   BaseSource,
-  Candidate,
+  Item,
   DdcEvent,
-} from "https://deno.land/x/ddc_vim@v0.18.0/types.ts#^";
+} from "https://deno.land/x/ddc_vim@v2.0.0/types.ts#^";
 import {
-  GatherCandidatesArguments,
+  GatherArguments,
   OnEventArguments,
-} from "https://deno.land/x/ddc_vim@v0.18.0/base/source.ts#^";
+} from "https://deno.land/x/ddc_vim@v2.0.0/base/source.ts#^";
 import { fn } from "https://deno.land/x/ddc_vim@v0.18.0/deps.ts#^";
 
 type DictCache = {
   mtime: Date | null;
-  candidates: Candidate[];
+  candidates: Item[];
 };
 
 export function isUpper(char: string) {
@@ -59,7 +59,7 @@ export class Source extends BaseSource<Params> {
   }
 
   async onInit(
-    args: GatherCandidatesArguments<Params>,
+    args: GatherArguments<Params>,
   ): Promise<void> {
     await this.onEvent(args);
   }
@@ -78,10 +78,10 @@ export class Source extends BaseSource<Params> {
     this.makeCache();
   }
 
-  async gatherCandidates({
+  async gather({
     completeStr,
     sourceParams,
-  }: GatherCandidatesArguments<Params>): Promise<Candidate[]> {
+  }: GatherArguments<Params>): Promise<Item[]> {
     if (!this.dicts) {
       return [];
     }
