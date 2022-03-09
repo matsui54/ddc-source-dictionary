@@ -1,13 +1,13 @@
 import {
   BaseSource,
-  Item,
   DdcEvent,
-} from "https://deno.land/x/ddc_vim@v2.0.0/types.ts#^";
+  Item,
+} from "https://deno.land/x/ddc_vim@v2.2.0/types.ts";
 import {
   GatherArguments,
   OnEventArguments,
-} from "https://deno.land/x/ddc_vim@v2.0.0/base/source.ts#^";
-import { fn } from "https://deno.land/x/ddc_vim@v0.18.0/deps.ts#^";
+} from "https://deno.land/x/ddc_vim@v2.2.0/base/source.ts";
+import { fn } from "https://deno.land/x/ddc_vim@v2.2.0/deps.ts";
 
 type DictCache = {
   mtime: Date | null;

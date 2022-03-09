@@ -1,15 +1,19 @@
 # ddc-dictionary
+
 ddc source for dictionary
 
 ## Required
 
 ### denops.vim
+
 https://github.com/vim-denops/denops.vim
 
 ### ddc.vim
+
 https://github.com/Shougo/ddc.vim
 
 ## Configuration examples
+
 For detail, please see help file.
 
 ```vim
@@ -33,4 +37,5 @@ call ddc#custom#patch_global('sourceOptions', {
 ```
 
 ## Original version
+
 https://github.com/deoplete-plugins/deoplete-dictionary
