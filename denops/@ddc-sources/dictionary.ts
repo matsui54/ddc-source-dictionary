@@ -78,32 +78,34 @@ export class Source extends BaseSource<Params> {
     this.makeCache();
   }
 
-  async gather({
+  gather({
     completeStr,
     sourceParams,
   }: GatherArguments<Params>): Promise<Item[]> {
     if (!this.dicts) {
-      return [];
+      return Promise.resolve([]);
     }
 
     const str = completeStr;
     const isFirstUpper = str.length ? isUpper(str[0]) : false;
     const isSecondUpper = str.length > 1 ? isUpper(str[1]) : false;
-    return this.dicts.map((dict) => this.cache[dict].candidates)
-      .flatMap((candidates) => candidates)
-      .map((candidate) => {
-        let word = candidate.word;
-        if (sourceParams.smartcase) {
-          if (isSecondUpper) return { word: candidate.word.toUpperCase() };
-          if (isFirstUpper) {
-            word = candidate.word.replace(/^./, (m) => m.toUpperCase());
+    return Promise.resolve(
+      this.dicts.map((dict) => this.cache[dict].candidates)
+        .flatMap((candidates) => candidates)
+        .map((candidate) => {
+          let word = candidate.word;
+          if (sourceParams.smartcase) {
+            if (isSecondUpper) return { word: candidate.word.toUpperCase() };
+            if (isFirstUpper) {
+              word = candidate.word.replace(/^./, (m) => m.toUpperCase());
+            }
           }
-        }
-        return {
-          word: word,
-          menu: sourceParams.showMenu ? candidate.menu : "",
-        };
-      });
+          return {
+            word: word,
+            menu: sourceParams.showMenu ? candidate.menu : "",
+          };
+        }),
+    );
   }
 
   params(): Params {
