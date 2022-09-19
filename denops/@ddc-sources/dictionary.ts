@@ -46,8 +46,9 @@ type Params = {
 export class Source extends BaseSource<Params> {
   private cache: { [filename: string]: DictCache } = {};
   private dicts: string[] = [];
-  private lastPrecedingLetters = "";
-  private lastItems: Item[] = [];
+  private lastPrecedingLetters: string | undefined = undefined;
+  private lastItems: Item[] | undefined = undefined;
+  private simplestItems: Item[] | undefined = undefined;
   events = ["InsertEnter"] as DdcEvent[];
 
   private getDictionaries(dictOpt: string): string[] {
@@ -108,11 +109,23 @@ export class Source extends BaseSource<Params> {
     }
 
     const [lastWord, offset] = extractLastWord(completeStr);
+    // Note: The early returns only makes sense when the option `isVolatile` is
+    // set to true.
+    if (offset === 0 && this.simplestItems) {
+      return Promise.resolve(this.simplestItems);
+    }
     const precedingLetters = completeStr.slice(0, offset);
+    if (
+      this.lastItems &&
+      this.lastPrecedingLetters === precedingLetters
+    ) {
+      return Promise.resolve(this.lastItems);
+    }
+    this.lastPrecedingLetters = precedingLetters;
     const isFirstUpper = lastWord.length ? isUpper(lastWord[0]) : false;
     const isSecondUpper = lastWord.length > 1 ? isUpper(lastWord[1]) : false;
-    return Promise.resolve(
-      this.dicts.map((dict) => this.cache[dict].candidates)
+    return Promise.resolve((() => {
+      const items = this.dicts.map((dict) => this.cache[dict].candidates)
         .flatMap((candidates) => candidates)
         .map((candidate) => {
           let word = candidate.word;
@@ -130,8 +143,14 @@ export class Source extends BaseSource<Params> {
         .map((candidate) => {
           candidate.word = precedingLetters.concat(candidate.word);
           return candidate;
-        }),
-    );
+        });
+      if (offset > 0) {
+        this.lastItems = items;
+      } else if (this.simplestItems === undefined) {
+        this.simplestItems = items;
+      }
+      return items;
+    })());
   }
 
   params(): Params {
