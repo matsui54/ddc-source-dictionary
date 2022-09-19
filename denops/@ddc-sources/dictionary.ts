@@ -8,6 +8,7 @@ import {
   OnEventArguments,
 } from "https://deno.land/x/ddc_vim@v2.3.0/base/source.ts";
 import { fn } from "https://deno.land/x/ddc_vim@v2.3.0/deps.ts";
+import { assertEquals } from "https://deno.land/std@0.155.0/testing/asserts.ts";
 
 type DictCache = {
   mtime: Date | null;
@@ -16,6 +17,24 @@ type DictCache = {
 
 export function isUpper(char: string) {
   return /[A-Z]/.test(char[0]);
+}
+
+function extractLastWord(
+  str: string,
+): [string, number] {
+  if (str.match(/[^a-zA-Z]$/)) {
+    return ["", str.length];
+  }
+  const upperCaseRegexp = /[A-Z][A-Z]+$/;
+  const camelCaseRegexp = /[A-Z][a-z]*$/; // Also matched to PascalCase
+  const snakeCaseRegexp = /[a-z][a-z]*$/; // Also matched to kebab-case, etc.
+  let matches: string[] | null = str.match(upperCaseRegexp);
+  if (matches === null) matches = str.match(camelCaseRegexp);
+  if (matches === null) matches = str.match(snakeCaseRegexp);
+  if (matches === null) return [str, 0];
+  const lastWord = matches.at(-1) || str;
+  const offset = str.lastIndexOf(lastWord);
+  return [lastWord, offset];
 }
 
 type Params = {
@@ -27,6 +46,8 @@ type Params = {
 export class Source extends BaseSource<Params> {
   private cache: { [filename: string]: DictCache } = {};
   private dicts: string[] = [];
+  private lastPrecedingLetters = "";
+  private lastItems: Item[] = [];
   events = ["InsertEnter"] as DdcEvent[];
 
   private getDictionaries(dictOpt: string): string[] {
@@ -86,9 +107,10 @@ export class Source extends BaseSource<Params> {
       return Promise.resolve([]);
     }
 
-    const str = completeStr;
-    const isFirstUpper = str.length ? isUpper(str[0]) : false;
-    const isSecondUpper = str.length > 1 ? isUpper(str[1]) : false;
+    const [lastWord, offset] = extractLastWord(completeStr);
+    const precedingLetters = completeStr.slice(0, offset);
+    const isFirstUpper = lastWord.length ? isUpper(lastWord[0]) : false;
+    const isSecondUpper = lastWord.length > 1 ? isUpper(lastWord[1]) : false;
     return Promise.resolve(
       this.dicts.map((dict) => this.cache[dict].candidates)
         .flatMap((candidates) => candidates)
@@ -104,6 +126,10 @@ export class Source extends BaseSource<Params> {
             word: word,
             menu: sourceParams.showMenu ? candidate.menu : "",
           };
+        })
+        .map((candidate) => {
+          candidate.word = precedingLetters.concat(candidate.word);
+          return candidate;
         }),
     );
   }
@@ -116,3 +142,34 @@ export class Source extends BaseSource<Params> {
     };
   }
 }
+
+Deno.test("extractLastWord", () => {
+  assertEquals(
+    extractLastWord("input"),
+    ["input", 0],
+  );
+  assertEquals(
+    extractLastWord("UPPER_CASE_INPUT"),
+    ["INPUT", 11],
+  );
+  assertEquals(
+    extractLastWord("camelCaseInput"),
+    ["Input", 9],
+  );
+  assertEquals(
+    extractLastWord("_snake_case_input"),
+    ["input", 12],
+  );
+  assertEquals(
+    extractLastWord("_unfinished_input_"),
+    ["", 18],
+  );
+  assertEquals(
+    extractLastWord("unfinishedI"),
+    ["I", 10],
+  );
+  assertEquals(
+    extractLastWord("_i"),
+    ["i", 1],
+  );
+});
