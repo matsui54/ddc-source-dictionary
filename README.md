@@ -26,6 +26,7 @@ call ddc#custom#patch_global('sourceParams', {
       \ '/usr/share/dict/words',
       \ '/usr/share/dict/spanish'],
       \ 'smartCase': v:true,
+      \ 'isVolatile': v:true,
       \ }
       \ })
 

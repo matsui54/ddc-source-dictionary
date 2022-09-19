@@ -45,6 +45,7 @@ EXAMPLES					*ddc-dictionary-examples*
 	      \ '/usr/share/dict/words',
 	      \ '/usr/share/dict/spanish'],
 	      \ 'smartCase': v:true,
+	      \ 'isVolatile': v:true,
 	      \ }
 	      \ })
 
