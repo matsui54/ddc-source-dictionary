@@ -29,13 +29,13 @@ https://github.com/vim-denops/denops.vim
 ==============================================================================
 USAGE							*ddc-dictionary-usage*
 
-Set 'dictionary' option or set "dicitonary" sourceParams like example below.
+Set 'dictionary' option or set "dictionary" sourceParams like example below.
 
 ==============================================================================
 EXAMPLES					*ddc-dictionary-examples*
 
 >
-	" you neeed to set 'dictionary' option
+	" you need to set 'dictionary' option
 	setlocal dictionary+=/usr/share/dict/words
 	" or you can specify dictionary path using sourceParams 
 	" ('dictPaths' must be list of files)

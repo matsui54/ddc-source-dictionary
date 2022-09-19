@@ -17,7 +17,7 @@ https://github.com/Shougo/ddc.vim
 For detail, please see help file.
 
 ```vim
-" you neeed to set 'dictionary' option
+" you need to set 'dictionary' option
 setlocal dictionary+=/usr/share/dict/words
 " or you can specify dictionary path using sourceParams ('dictPaths' must be list of files)
 call ddc#custom#patch_global('sourceParams', {
