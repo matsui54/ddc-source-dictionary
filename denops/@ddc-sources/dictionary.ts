@@ -8,7 +8,7 @@ import {
   OnEventArguments,
 } from "https://deno.land/x/ddc_vim@v3.4.0/base/source.ts";
 import { fn } from "https://deno.land/x/ddc_vim@v3.4.0/deps.ts";
-import { assertEquals } from "https://deno.land/std@0.173.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.181.0/testing/asserts.ts";
 
 type DictCache = {
   mtime: Date | null;
