@@ -1,14 +1,11 @@
+import type { DdcEvent, Item } from "jsr:@shougo/ddc-vim@7.1.0/types";
 import {
   BaseSource,
-  DdcEvent,
-  Item,
-} from "https://deno.land/x/ddc_vim@v4.1.0/types.ts";
-import {
-  GatherArguments,
-  OnEventArguments,
-} from "https://deno.land/x/ddc_vim@v4.1.0/base/source.ts";
-import { fn } from "https://deno.land/x/ddc_vim@v4.1.0/deps.ts";
-import { assertEquals } from "https://deno.land/std@0.205.0/testing/asserts.ts";
+  type GatherArguments,
+  type OnEventArguments,
+} from "jsr:@shougo/ddc-vim@7.1.0/source";
+import * as fn from "jsr:@denops/std@7.2.0/function";
+import { assertEquals } from "jsr:@std/assert@1.0.6";
 
 type DictCache = {
   mtime: Date | null;
