@@ -1,9 +1,9 @@
-import type { DdcEvent, Item } from "jsr:@shougo/ddc-vim@7.1.0/types";
+import type { DdcEvent, Item } from "jsr:@shougo/ddc-vim@9.5.0/types";
 import {
   BaseSource,
   type GatherArguments,
   type OnEventArguments,
-} from "jsr:@shougo/ddc-vim@7.1.0/source";
+} from "jsr:@shougo/ddc-vim@9.5.0/source";
 import * as fn from "jsr:@denops/std@7.6.0/function";
 import { assertEquals } from "jsr:@std/assert@1.0.6";
 
