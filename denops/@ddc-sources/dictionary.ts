@@ -5,7 +5,7 @@ import {
   type OnEventArguments,
 } from "jsr:@shougo/ddc-vim@9.5.0/source";
 import * as fn from "jsr:@denops/std@7.6.0/function";
-import { assertEquals } from "jsr:@std/assert@1.0.6";
+import { assertEquals } from "jsr:@std/assert@1.0.13";
 
 type DictCache = {
   mtime: Date | null;
